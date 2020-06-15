@@ -1,0 +1,486 @@
+package com.noideawhatimdoing;
+
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.Random;
+
+public class Main {
+
+    public static void main(String[] args){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("How many games do you want to play?(up to 20): ");
+        int amountOfGames = 0;
+        int conversion = 0;
+        int computerWins = 0;
+        int playerWins = 0;
+        int draws = 0;
+
+        amountOfGames = Integer.valueOf(scanner.nextLine());
+        while(amountOfGames > 20){
+            amountOfGames = Integer.valueOf(scanner.nextLine());
+            if(amountOfGames <= 20){
+                break;
+            }
+            System.out.println("That's too many!");
+        }
+
+        for(int i = 0; i < amountOfGames;i++){
+            conversion = fakeMainMethod(2);
+            if(conversion == 1){
+                computerWins += 1;
+            } else if (conversion == 2){
+                playerWins += 1;
+            } else if (conversion == 3){
+                draws += 1;
+            } else if (conversion == 4){
+                System.out.println("GAME ENDED");
+                System.exit(0);
+            }
+            System.out.println("");
+            System.out.println("Player wins: " + playerWins);
+            System.out.println("Computer wins: " + computerWins);
+            System.out.println("Draws: " + draws);
+        }
+
+        if(playerWins > computerWins){
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+            System.out.println("YOU WON THE GAME");
+        } else if (playerWins < computerWins){
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+            System.out.println("YOU LOST THE GAME");
+        } else if (playerWins == computerWins){
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+            System.out.println("YOU DREW, NOTHING SPECIAL");
+        }
+    }
+    public static int fakeMainMethod(int actuallyA) {
+        Scanner scanner = new Scanner(System.in);
+        Random rand = new Random();
+        String[] cards = {"Ace", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+        Integer[] numberOfCards = {11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10};
+        int upperBound = 14;
+        int randomNumber = 0;
+        int startingCards = 2;
+        int total = 0;
+        int firstHand = 0;
+        int secondHand = 1;
+        int numberOfAces = 0;
+        int theTruth = 0;
+        actuallyA = 0;
+
+        String answer = "";
+        boolean letsContinue = true;
+
+        while (letsContinue == true) {
+            System.out.print("Want to play some Blackjack? (Yes or No (type exit to end game): ");
+            answer = scanner.nextLine();
+            if (answer.equals("yes")) {
+                System.out.println("Alright lets get started!");
+                letsContinue = false;
+            } else if (answer.equals("no")) {
+                System.out.println("Ok fine. Maybe later?");
+            } else if(answer.equals("exit")){
+                return(4);
+            } else {
+                System.out.println("That's not a valid answer");
+            }
+        }
+
+        for (int i = 0; i < startingCards; i++) {
+            if (i == firstHand) {
+                randomNumber = rand.nextInt(upperBound);
+                total += numberOfCards[randomNumber];
+                System.out.println("First hand: " + cards[randomNumber]);
+                System.out.println("Current total: " + total);
+                if (randomNumber == 0) {
+                    numberOfAces += 1;
+                }
+
+            } else if (i == secondHand) {
+                randomNumber = rand.nextInt(upperBound);
+                total += numberOfCards[randomNumber];
+                System.out.println("Second hand: " + cards[randomNumber]);
+                System.out.println("Current total: " + total);
+                if (randomNumber == 0) {
+                    numberOfAces += 1;
+                }
+            }
+
+            if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        }
+
+        System.out.println("Do you want to hit?");
+        String hitAnswer = scanner.nextLine();
+        if (hitAnswer.equals("yes")) {
+            randomNumber = hit(1);
+            total += numberOfCards[randomNumber];
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            System.out.println("What you drew: " + cards[randomNumber]);
+            System.out.println("Current total: " + total);
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("You went over but you have an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("");
+                System.out.println("Current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Bust!");
+                System.out.println("");
+                System.out.println("Computer wins!");
+                return(1);
+            } else if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("Alright then");
+            theTruth = computerDealer(total);
+            if (theTruth == 1) {
+                System.out.println("The computer wins!");
+                return(1);
+            } else if (theTruth == 2) {
+                System.out.println("You win, well played");
+                return(2);
+            } else if (theTruth == 3) {
+                System.out.println("You drew :/");
+                return(3);
+            }
+            return(5);
+        }
+
+        System.out.println("Do you want to hit?");
+        String hitAnswerTwo = scanner.nextLine();
+        if (hitAnswerTwo.equals("yes")) {
+            randomNumber = hit(1);
+            total += numberOfCards[randomNumber];
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            System.out.println("What you drew: " + cards[randomNumber]);
+            System.out.println("Current total: " + total);
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("You went over but you have an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("");
+                System.out.println("Current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Bust!");
+                System.out.println("");
+                System.out.println("Computer wins!");
+                return(1);
+            } else if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("Alright then");
+            theTruth = computerDealer(total);
+            if (theTruth == 1) {
+                System.out.println("The computer wins!");
+                return(1);
+            } else if (theTruth == 2) {
+                System.out.println("You win, well played");
+                return(2);
+            } else if (theTruth == 3) {
+                System.out.println("You drew :/");
+                return(3);
+            }
+            return(5);
+        }
+
+        System.out.println("Do you want to hit?");
+        String hitAnswerThree = scanner.nextLine();
+        if (hitAnswerThree.equals("yes")) {
+            randomNumber = hit(1);
+            total += numberOfCards[randomNumber];
+            System.out.println("What you drew: " + cards[randomNumber]);
+            System.out.println("Current total: " + total);
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("You went over but you have an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("");
+                System.out.println("Current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Bust!");
+                System.out.println("");
+                System.out.println("Computer wins!");
+                return(1);
+            } else if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("Alright then");
+            theTruth = computerDealer(total);
+            if (theTruth == 1) {
+                System.out.println("The computer wins!");
+                return(1);
+            } else if (theTruth == 2) {
+                System.out.println("You win, well played");
+                return(2);
+            } else if (theTruth == 3) {
+                System.out.println("You drew :/");
+                return(3);
+            }
+            return(5);
+        }
+
+        System.out.println("Do you want to hit?");
+        String hitAnswerFour = scanner.nextLine();
+        if (hitAnswerFour.equals("yes")) {
+            randomNumber = hit(1);
+            total += numberOfCards[randomNumber];
+            System.out.println("What you drew: " + cards[randomNumber]);
+            System.out.println("Current total: " + total);
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("You went over but you have an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("");
+                System.out.println("Current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Bust!");
+                System.out.println("");
+                System.out.println("Computer wins!");
+                return(1);
+            } else if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("Alright then");
+            theTruth = computerDealer(total);
+            if (theTruth == 1) {
+                System.out.println("The computer wins!");
+                return(1);
+            } else if (theTruth == 2) {
+                System.out.println("You win, well played");
+                return(2);
+            } else if (theTruth == 3) {
+                System.out.println("You drew :/");
+                return(3);
+            }
+            return(5);
+        }
+
+        System.out.println("Do you want to hit?");
+        String hitAnswerFive = scanner.nextLine();
+        if (hitAnswerFive.equals("yes")) {
+            randomNumber = hit(1);
+            total += numberOfCards[randomNumber];
+            System.out.println("What you drew: " + cards[randomNumber]);
+            System.out.println("Current total: " + total);
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("You went over but you have an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("");
+                System.out.println("Current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Bust!");
+                System.out.println("");
+                System.out.println("Computer wins!");
+                return(1);
+            } else if (total == 21) {
+                System.out.println("Blackjack!");
+                theTruth = computerDealer(total);
+                if (theTruth == 1) {
+                    System.out.println("The computer wins!");
+                    return(1);
+                } else if (theTruth == 2) {
+                    System.out.println("You win, well played");
+                    return(2);
+                } else if (theTruth == 3) {
+                    System.out.println("You drew :/");
+                    return(3);
+                }
+                return(5);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("Alright then");
+            theTruth = computerDealer(total);
+            if (theTruth == 1) {
+                System.out.println("The computer wins!");
+                return(1);
+            } else if (theTruth == 2) {
+                System.out.println("You win, well played");
+                return(2);
+            } else if (theTruth == 3) {
+                System.out.println("You drew :/");
+                return(3);
+            }
+            return(5);
+        }
+        return(5);
+    }
+
+    public static int hit(int a) {
+        int hitNumber = a;
+        Random rand = new Random();
+        int upperBound = 14;
+        hitNumber = rand.nextInt(upperBound);
+        return hitNumber;
+    }
+
+    public static int computerDealer(int a) {
+        Random rand = new Random();
+        String[] cards = {"Ace", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+        Integer[] numberOfCards = {11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10};
+        int computerCards = 2;
+        int firstHand = 0;
+        int secondHand = 1;
+        int randomNumber = 0;
+        int upperBound = 14;
+        int total = 0;
+        int numberOfAces = 0;
+        int playersFinal = a;
+
+        System.out.println("");
+        for (int i = 0; i < computerCards; i++) {
+            if (i == firstHand) {
+                randomNumber = rand.nextInt(upperBound);
+                total += numberOfCards[randomNumber];
+                System.out.println("First computer's hand: " + cards[randomNumber]);
+                System.out.println("Current computer's total: " + total);
+                System.out.println("");
+                if (randomNumber == 0) {
+                    numberOfAces += 1;
+                }
+
+            } else if (i == secondHand) {
+                randomNumber = rand.nextInt(upperBound);
+                total += numberOfCards[randomNumber];
+                System.out.println("Second computer's hand: " + cards[randomNumber]);
+                System.out.println("Current computer's total: " + total);
+                System.out.println("");
+                if (randomNumber == 0) {
+                    numberOfAces += 1;
+                }
+            }
+            if (total == 21) {
+                System.out.println("Computer got a BlackJack");
+                if (total > playersFinal) {
+                    return (1);
+                } else if (total == playersFinal) {
+                    return (3);
+                }
+            }
+        }
+
+        while (total < 17) {
+            randomNumber = rand.nextInt(upperBound);
+            total += numberOfCards[randomNumber];
+            if (randomNumber == 0) {
+                numberOfAces += 1;
+            }
+            System.out.println("What computer drew: " + cards[randomNumber]);
+            System.out.println("Computer's current total: " + total);
+            if (total > 21 && numberOfAces > 0) {
+                System.out.println("Computer went over but has an Ace!");
+                total -= 10;
+                numberOfAces -= 1;
+                System.out.println("Computer's current total: " + total);
+            } else if (total > 21) {
+                System.out.println("Computer bust!");
+                System.out.println("");
+                return (2);
+            } else if (total == 21 && playersFinal == 21) {
+                System.out.println("Blackjack!");
+                return (3);
+            }
+            System.out.println("");
+        }
+        if (total > playersFinal) {
+            return (1);
+        } else if (total < playersFinal) {
+            return (2);
+        } else if (total == playersFinal) {
+            return (3);
+        }
+        return (5);
+
+        }
+    }
